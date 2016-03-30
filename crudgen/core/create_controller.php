@@ -66,10 +66,11 @@ $string .="\n\n    public function index()
         \$$c_url = \$this->" . $m . "->get_all();
 
         \$data = array(
-            '" . $c_url . "_data' => \$$c_url
+            '" . $c_url . "_data' => \$$c_url,
+			'title' => 'TesNOW::SCP::$c',
         );
 		\$this->load->view('templates/header', \$data); 	
-        \$this->load->view('$v_list', \$data);
+        \$this->load->view('$c_url/$v_list', \$data);
 		\$this->load->view('templates/footer', \$data); 	
 		
     }";
@@ -80,14 +81,15 @@ $string .= "\n\n    public function read(\$id)
     {
         \$row = \$this->" . $m . "->get_by_id(\$id);
         if (\$row) {
-            \$data = array(";
+            \$data = array(
+			'title'  => 'TesNow::SCP::$c',";
 foreach ($all as $row) {
     $string .= "\n\t\t'" . $row['column_name'] . "' => \$row->" . $row['column_name'] . ",";
 }
 $string .= "\n\t    );
 			\$this->load->view('templates/header', \$data); 
-            \$this->load->view('$v_read', \$data);
-			
+            \$this->load->view('$c_url/$v_read', \$data);
+			\$this->load->view('templates/footer', \$data);
         } else {
             \$this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('$c_url'));
@@ -98,13 +100,14 @@ $string .= "\n\t    );
     {
         \$data = array(
             'button' => 'Create',
-            'action' => site_url('$c_url/create_action'),";
+            'action' => site_url('$c_url/create_action'),
+			'title'  => 'TesNow::SCP::Create $c',";
 foreach ($all as $row) {
     $string .= "\n\t    '" . $row['column_name'] . "' => set_value('" . $row['column_name'] . "'),";
 }
 $string .= "\n\t);
         \$this->load->view('templates/header', \$data); 	
-        \$this->load->view('$v_form', \$data);
+        \$this->load->view('$c_url/$v_form', \$data);
 		\$this->load->view('templates/footer', \$data); 	
 		
     }
@@ -141,13 +144,15 @@ $string .= "\n\t    );
         if (\$row) {
             \$data = array(
                 'button' => 'Update',
-                'action' => site_url('$c_url/update_action'),";
+                'action' => site_url('$c_url/update_action'),
+				'title'  => 'TesNow::SCP::Update $c',";
+				
 foreach ($all as $row) {
     $string .= "\n\t\t'" . $row['column_name'] . "' => set_value('" . $row['column_name'] . "', \$row->". $row['column_name']."),";
 }
 $string .= "\n\t    );
 			\$this->load->view('templates/header', \$data); 
-            \$this->load->view('$v_form', \$data);
+            \$this->load->view('$c_url/$v_edit', \$data);
 			\$this->load->view('templates/footer', \$data);
 		
         } else {
@@ -164,6 +169,7 @@ $string .= "\n\t    );
             \$this->update(\$this->input->post('$pk', TRUE));
         } else {
             \$data = array(";
+			
 foreach ($non_pk as $row) {
 	
 	
@@ -178,7 +184,7 @@ foreach ($non_pk as $row) {
 		else{
 		$string .= "\n\t\t'" . $row['column_name'] . "' => \$this->input->post('" . $row['column_name'] . "',TRUE),";
 		}
-	
+		
 	
 	
 	

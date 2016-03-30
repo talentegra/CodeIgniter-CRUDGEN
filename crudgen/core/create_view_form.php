@@ -9,10 +9,11 @@ foreach ($non_pk as $row) {
     if ($row["data_type"] == 'text')
     {
     $string .= "\n\t    <div class=\" form-group\"> 
-            <label class=\"col-sm-2\" for=\"".$row["column_name"]."\">".label($row["column_name"])." <?php echo form_error('".$row["column_name"]."') ?></label>
+            <label class=\"col-sm-2\" for=\"".$row["column_name"]."\">".label($row["column_name"])."</label>
             <div class=\"col-sm-6\">
 			<textarea class=\"form-control\" rows=\"3\" name=\"".$row["column_name"]."\" id=\"".$row["column_name"]."\" placeholder=\"".label($row["column_name"])."\"><?php echo $".$row["column_name"]."; ?></textarea>
-        </div>
+			<?php echo form_error('".$row["column_name"]."') ?>
+		</div>
 		</div>";
     } 
 	
@@ -25,10 +26,12 @@ foreach ($non_pk as $row) {
 	else
     {
     $string .= "\n\t    <div class=\" form-group\">
-			 <label class=\"col-sm-2\" for=\"".$row["data_type"]."\">".label($row["column_name"])." <?php echo form_error('".$row["column_name"]."') ?></label>
+			 <label class=\"col-sm-2\" for=\"".$row["data_type"]."\">".label($row["column_name"])."</label>
             <div class=\"col-sm-6\">
 			<input type=\"text\" class=\"form-control\" name=\"".$row["column_name"]."\" id=\"".$row["column_name"]."\" placeholder=\"".label($row["column_name"])."\" value=\"<?php echo $".$row["column_name"]."; ?>\" />
-        </div></div>";
+			<?php echo form_error('".$row["column_name"]."') ?>
+		</div>
+		</div>";
     }
 }
 $string .= " </div> <!--/ Panel Body -->

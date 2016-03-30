@@ -1,7 +1,7 @@
 <?php 
 
 $string = "<h2 style=\"margin-top:0px\">".ucfirst($table_name)." <?php echo \$button ?></h2>
-        <form action=\"<?php echo \$action; ?>\" method=\"post\">
+        <form class=\"form-horizontal\" action=\"<?php echo \$action; ?>\" method=\"post\">
 		<div class=\"panel panel-default\">
     <div class=\"panel-heading\"><i class=\"glyphicon glyphicon-signal\"></i> </div>
 	<div class=\"panel-body\">";
@@ -11,10 +11,11 @@ foreach ($non_pk as $row) {
 	if ($row["data_type"] == 'text')
     {
     $string .= "\n\t    <div class=\"form-group\">
-            <label class=\"col-sm-2\" for=\"".$row["column_name"]."\">".label($row["column_name"])." <?php echo form_error('".$row["column_name"]."') ?></label>
+            <label class=\"col-sm-2\" for=\"".$row["column_name"]."\">".label($row["column_name"])."</label>
             <div class=\"col-sm-6\">
 			<textarea class=\"form-control\" rows=\"3\" name=\"".$row["column_name"]."\" id=\"".$row["column_name"]."\" placeholder=\"".label($row["column_name"])."\"><?php echo $".$row["column_name"]."; ?></textarea>
-        </div>
+			 <?php echo form_error('".$row["column_name"]."') ?>
+		</div>
 		</div>";
     } elseif ($row["column_name"] == 'created' || $row["column_name"] == 'updated') {
 		
@@ -25,10 +26,11 @@ foreach ($non_pk as $row) {
 	else
     {
     $string .= "\n\t    <div class=\"form-group\">
-            <label class=\"col-sm-2\" for=\"".$row["data_type"]."\">".label($row["column_name"])." <?php echo form_error('".$row["column_name"]."') ?></label>
+            <label class=\"col-sm-2\" for=\"".$row["data_type"]."\">".label($row["column_name"])."</label>
             <div class=\"col-sm-6\">
 			<input type=\"text\" class=\"form-control\" name=\"".$row["column_name"]."\" id=\"".$row["column_name"]."\" placeholder=\"".label($row["column_name"])."\" value=\"<?php echo $".$row["column_name"]."; ?>\" />
-        </div>
+			<?php echo form_error('".$row["column_name"]."') ?>
+		</div>
 		</div>";
     }
 }

@@ -17,7 +17,7 @@ require_once 'core/process.php';
     </head>
     <body>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-8">
                 <form action="index.php" method="POST">
 
                     <div class="form-group">
@@ -57,7 +57,10 @@ require_once 'core/process.php';
                             </div>
                         </div>
                     </div>
-
+					
+					<div class="form-group" id="table_col">
+                        
+                    </div>
                     <div class="form-group">
                         <div class="checkbox">
                             <?php $export_excel = isset($_POST['export_excel']) ? $_POST['export_excel'] : ''; ?>
@@ -121,13 +124,13 @@ require_once 'core/process.php';
 			
 
 			
-            <div class="col-md-9">
+            <div class="col-md-4">
                 <h3 style="margin-top: 0px">Codeigniter CRUD Generator 1.3 by <a target="_blank" href="http://harviacode.com">harviacode.com</a></h3>
                 
 			</div>	
 				
 
-<div class="col-md-9" >
+<div class="col-md-4" >
   	<div class="panel panel-default">
   		<div class="panel-heading"><span class="fa fa-cog"></span> Form <span id="selected_table"></span></div>
   		<div class="panel-body" id="proses"></div>
@@ -227,12 +230,192 @@ require_once 'core/process.php';
                     document.getElementById('model').value = '';
                 }
 				
+				show_table_col(table_name);	
+				
             }
 			
-			
+			function show_table_col(table_name) {
+				document.getElementById("table_col").innerHTML = "";
+				if (table_name.length == 0) {
+					document.getElementById("table_col").innerHTML = "";
+					return;
+				} else {
+					var xmlhttp = new XMLHttpRequest();
+					xmlhttp.onreadystatechange = function() {
+						if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+							//arr_col[];
+							if(xmlhttp.responseText){
+								var arr_col = JSON.parse(xmlhttp.responseText);
+								  
+										tableCreate(arr_col);
+									
+							}
+							//document.getElementById("table_col").innerHTML = xmlhttp.responseText;
+						}
+					};
+					xmlhttp.open("GET", "core/ajax_call.php?q=" + table_name, true);
+					xmlhttp.send();
+				}
+			}
+			function tableCreate(arr_col) {
 				
-		
-		
+				
+				var body = document.getElementById("table_col");
+				var tbl = document.createElement('table');
+				tbl.style.width = '100%';
+				tbl.setAttribute('border', '1');
+				var tbdy = document.createElement('tbody');
+				 for(i=0;i<arr_col.length;i++){
+					var tr = document.createElement('tr');
+				 if(arr_col[i].COLUMN_KEY!='PRI' && arr_col[i].COLUMN_NAME!='created' && arr_col[i].COLUMN_NAME!='updated'){
+					for (var j = 0; j < 5; j++) {
+						if(j==0){
+							var td = document.createElement('td');
+							td.innerHTML = arr_col[i].COLUMN_NAME;
+							tr.appendChild(td); 
+						}
+						if(j==1){
+							var td = document.createElement('td');
+							
+							var html_str = document.createElement("span");
+							html_str.innerHTML = arr_col[i].COLUMN_TYPE;
+							
+							var box_type = document.createElement("select");
+							box_type.name = "input_box_"+arr_col[i].COLUMN_NAME;
+							box_type.id = "input_box_"+arr_col[i].COLUMN_NAME;
+							td.appendChild(html_str);
+							td.appendChild(box_type);
+							var arr_sel = ["textbox","textarea","checkbox","radio","dropdown","password","datepicker"];
+							//Create and append the options
+							var option = document.createElement("option");
+								option.value = '';
+								option.text = 'select';
+								box_type.appendChild(option);
+							for (var k = 0; k < arr_sel.length; k++) {
+								var option = document.createElement("option");
+								option.value = arr_sel[k];
+								option.text = arr_sel[k];
+								if(arr_sel[k] == "required"){
+									option.selected = "selected";
+								}
+								box_type.appendChild(option);
+							}
+							
+							tr.appendChild(td); 
+						}
+						if(j==2){
+							var td = document.createElement('td');
+							var checkbox = document.createElement('input');
+							checkbox.type = "checkbox";
+							checkbox.name = "chk_not_required[]";
+							checkbox.value = arr_col[i].COLUMN_NAME;
+							checkbox.id = arr_col[i].COLUMN_NAME;
+							//checkbox.onclick ="select_not_required("+arr_col[i].COLUMN_NAME+")";
+							var label = document.createElement('label')
+							label.htmlFor = arr_col[i].COLUMN_NAME;
+							label.appendChild(document.createTextNode('ignore field'));
+							checkbox.setAttribute("onclick", "select_not_required('"+arr_col[i].COLUMN_NAME+"')");
+							td.appendChild(checkbox);
+							td.appendChild(label);
+							
+							//td.appendChild = (checkbox);
+							tr.appendChild(td);
+							
+							
+						}
+						if(j==3){
+							var td = document.createElement('td');
+							var checkbox = document.createElement('input');
+							checkbox.type = "checkbox";
+							checkbox.name = "chk_not_req_validation[]";
+							checkbox.value = arr_col[i].COLUMN_NAME;
+							checkbox.id = 'no_vali'+arr_col[i].COLUMN_NAME;
+							var label = document.createElement('label')
+							label.htmlFor = arr_col[i].COLUMN_NAME;
+							label.appendChild(document.createTextNode('ignore validation'));
+							checkbox.setAttribute("onclick", "select_not_required_validation('"+arr_col[i].COLUMN_NAME+"')");
+							td.appendChild(checkbox);
+							td.appendChild(label);
+							
+							//td.appendChild = (checkbox);
+							tr.appendChild(td);
+							
+						}
+						if(j==4){
+							var td = document.createElement('td');
+							
+							//Create array of options to be added
+							var arr_sel = ["required","email","is_unique","date","url","number","digits"];
+
+							//Create and append select list
+							var selectList = document.createElement("select");
+							selectList.name = "sel_validation_"+arr_col[i].COLUMN_NAME+"[]";
+							selectList.id = "sel_validation_"+arr_col[i].COLUMN_NAME;
+							selectList.multiple = "multiple";
+							//selectList.setAttribute("onchange", "select_validation_change('"+arr_col[i].COLUMN_NAME+"')");
+							td.appendChild(selectList);
+
+							//Create and append the options
+							for (var k = 0; k < arr_sel.length; k++) {
+								var option = document.createElement("option");
+								option.value = arr_sel[k];
+								option.text = arr_sel[k];
+								if(arr_sel[k] == "required"){
+									option.selected = "selected";
+								}
+								selectList.appendChild(option);
+							}
+
+							//td.appendChild(checkbox);
+							//td.appendChild(label);
+							
+							//td.appendChild = (checkbox);
+							tr.appendChild(td);
+							
+						}
+						
+					}
+				 }
+					tbdy.appendChild(tr);
+				}
+				tbl.appendChild(tbdy);
+				body.appendChild(tbl)
+				
+				//document.getElementById("table_col").innerHTML = y;
+			}
+			
+			function select_not_required_validation(val){
+				inputElement = document.getElementById('no_vali'+val);
+				if(inputElement.checked){
+							 disable('sel_validation_'+val);
+						  }
+						  else{
+							 enable('sel_validation_'+val);
+						  }
+			}
+		    function select_not_required(val){
+				inputElement = document.getElementById(val);
+				if(inputElement.checked){
+							 disable('no_vali'+val);
+							 disable('sel_validation_'+val);
+						  }
+						  else{
+							 enable('no_vali'+val);
+							 enable('sel_validation_'+val);
+						  }
+			}
+			function enable(id) {
+				var x = document.getElementById(id);
+				x.disabled = false;
+			}
+
+			function disable(id) {
+				var x = document.getElementById(id);
+				x.checked = false;
+				
+				x.selectedIndex = -1;
+				x.setAttribute("disabled", "true");
+			}
 		
 	
         </script>
